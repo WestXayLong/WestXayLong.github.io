@@ -78,6 +78,135 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-01-会话技术" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/29/01-%E4%BC%9A%E8%AF%9D%E6%8A%80%E6%9C%AF/" class="article-date">
+  <time class="dt-published" datetime="2022-05-29T07:50:11.000Z" itemprop="datePublished">2022-05-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/05/29/01-%E4%BC%9A%E8%AF%9D%E6%8A%80%E6%9C%AF/">01_会话技术</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="一、会话跟踪"><a href="#一、会话跟踪" class="headerlink" title="一、会话跟踪"></a>一、会话跟踪</h2><h3 id="1-会话是什么"><a href="#1-会话是什么" class="headerlink" title="1.会话是什么"></a>1.会话是什么</h3><h4 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h4><p>用户打开浏览器，访问web服务器的资源，会话建立，直到有一方（客户端&#x2F;服务器）断开连接，会话结束。</p>
+<blockquote>
+<p>就相当于打电话，如果接通了，会话就建立了，双方就可以对话了。如果任意一方挂断电话，会话就结束了。</p>
+</blockquote>
+<ul>
+<li>从浏览器发出请求到服务端响应数据给前端之后，一次会话(在浏览器和服务器之间)就被建立了</li>
+<li>会话被建立后，如果浏览器或服务端都没有被关闭，则会话就会持续建立着</li>
+<li>浏览器和服务器就可以继续使用该会话进行请求发送和响应，上述的整个过程就被称之为会话</li>
+</ul>
+<h3 id="2-会话跟踪"><a href="#2-会话跟踪" class="headerlink" title="2.会话跟踪"></a>2.会话跟踪</h3><h4 id="概述：-1"><a href="#概述：-1" class="headerlink" title="概述："></a>概述：</h4><p>一种维护浏览器状态的方法，服务器需要识别多次请求是否来自于同一浏览器，&#x3D;&#x3D;以便在同一次会话的多次请求间共享数据&#x3D;&#x3D;。</p>
+<ul>
+<li>服务器会收到多个请求，这多个请求可能来自多个浏览器</li>
+<li>服务器需要识别请求是否来自同一个浏览器</li>
+<li>服务器用来识别浏览器的过程，这个过程就是&#x3D;&#x3D;会话跟踪&#x3D;&#x3D;</li>
+<li>服务器识别浏览器后就可以在同一个会话中多次请求之间来共享数据</li>
+</ul>
+<blockquote>
+<p><strong>思考问题1：</strong><code>一个会话中的多次请求为什么要共享数据呢？</code></p>
+<p>在购物网站上购物时，需要先登录网站才能购物，而在真正购物时，你需要向服务器发送一个请求，而且你需要向服务器证明你的用户身份，否则服务器就会不知道购买者是谁，这时就需要共享刚才登录请求的数据；</p>
+<p><strong>思考问题2：</strong><code>为什么服务器和浏览器之间不支持数据共享？</code></p>
+<ul>
+<li><p>浏览器和服务器之间使用的是HTTP请求来进行数据传输</p>
+</li>
+<li><p>&#x3D;&#x3D;HTTP协议是无状态的&#x3D;&#x3D;，每次浏览器向服务器请求时，服务器都会将该请求视为新的请求</p>
+</li>
+<li><p>HTTP协议设计成无状态的目的是让每次请求之间相互独立，互不影响</p>
+</li>
+<li><p>请求与请求之间独立后，就无法实现多次请求之间的数据共享</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="二、cookie"><a href="#二、cookie" class="headerlink" title="二、cookie"></a>二、cookie</h2><h3 id="1-cookie是什么"><a href="#1-cookie是什么" class="headerlink" title="1.cookie是什么"></a>1.cookie是什么</h3><p>&#x3D;&#x3D;客户端会话技术&#x3D;&#x3D;，将数据保存到客户端(浏览器)，以后每次请求都携带Cookie数据进行访问</p>
+<h3 id="2-cookie的基本使用"><a href="#2-cookie的基本使用" class="headerlink" title="2.cookie的基本使用"></a>2.cookie的基本使用</h3><p>对于cookie的使用，我们主要来看后端的操作，&#x3D;&#x3D;发送cookie&#x3D;&#x3D;和&#x3D;&#x3D;获取cookie&#x3D;&#x3D;</p>
+<h4 id="发送cookie"><a href="#发送cookie" class="headerlink" title="发送cookie"></a>发送cookie</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建cookie对象，并设置数据</span></span><br><span class="line"><span class="type">Cookie</span> <span class="variable">cookie</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Cookie</span>(<span class="string">&quot;key&quot;</span>,<span class="string">&quot;value&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//发送cookie到浏览器</span></span><br><span class="line">response.addCookie(cookie);</span><br></pre></td></tr></table></figure>
+
+<p>发送Cookie其实就是把Cookie添加到响应头里</p>
+<p><img src="D:\wps_file\note__picture\1652521070766.png" alt="1652521070766"></p>
+<h4 id="接收cookie"><a href="#接收cookie" class="headerlink" title="接收cookie"></a>接收cookie</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="comment">//遍历cookie数组</span></span><br><span class="line"><span class="keyword">for</span> (Cookie cookie : cookies) &#123;</span><br><span class="line">    <span class="comment">//获取cookie的键</span></span><br><span class="line">    System.out.println(cookie.getName());</span><br><span class="line">    <span class="comment">//获取cookie的值</span></span><br><span class="line">    System.out.println(cookie.getValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-cookie的使用细节"><a href="#3-cookie的使用细节" class="headerlink" title="3.cookie的使用细节"></a>3.cookie的使用细节</h3><h4 id="cookie的存活时间"><a href="#cookie的存活时间" class="headerlink" title="cookie的存活时间"></a>cookie的存活时间</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//cookie对象的一个方法,用来设置cookie的存活时间</span></span><br><span class="line">setMaxAge(<span class="type">int</span> seconds)</span><br></pre></td></tr></table></figure>
+
+<p>参数取值：</p>
+<ul>
+<li><code>负数</code>：<strong>默认值</strong>，将cookie存在浏览器的内存中，当浏览器关闭时，cookie就会被销毁</li>
+<li><code>正数</code>：将Cookie写入浏览器所在电脑的硬盘的txt文件里，持久化存储。到时间自动删除（时间单位：秒）</li>
+<li><code>零</code>：删除cookie</li>
+</ul>
+<h4 id="cookie存储中文"><a href="#cookie存储中文" class="headerlink" title="cookie存储中文"></a>cookie存储中文</h4><blockquote>
+<p>经过自己的实验，发现在最新的edge、firefox和谷歌浏览器中可以直接存储中文，无需处理。但是为了兼容性，还是建议对要存储的中文进行处理，因为在一些版本较老的浏览器上存储中文可能会报错。</p>
+</blockquote>
+<p>cookie存储中文</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//对咬存储的中文进行编码处理</span></span><br><span class="line"><span class="type">String</span> <span class="variable">food</span> <span class="operator">=</span> URLEncoder.encode(<span class="string">&quot;牛肉干&quot;</span>, <span class="string">&quot;UTF-8&quot;</span>);</span><br><span class="line"><span class="comment">//创建cookie</span></span><br><span class="line"><span class="type">Cookie</span> <span class="variable">cookie</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Cookie</span>(<span class="string">&quot;food&quot;</span>, food);</span><br><span class="line"><span class="comment">//发送cookie</span></span><br><span class="line">response.addCookie(cookie);</span><br></pre></td></tr></table></figure>
+
+<p>cookie获取中文</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取cookie数组</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="comment">//便利cookie数组</span></span><br><span class="line"><span class="keyword">for</span> (Cookie cookie : cookies) &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (cookie.getName().equals(<span class="string">&quot;food&quot;</span>)) &#123;</span><br><span class="line">        <span class="comment">//对获取的值进行解码</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> URLDecoder.decode(cookie.getValue(), <span class="string">&quot;UTF-8&quot;</span>);</span><br><span class="line">        System.out.println(cookie.getName() + <span class="string">&quot;:&quot;</span> + value);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、session"><a href="#三、session" class="headerlink" title="三、session"></a>三、session</h2><h3 id="1-session是什么？"><a href="#1-session是什么？" class="headerlink" title="1.session是什么？"></a>1.session是什么？</h3><p>&#x3D;&#x3D;服务端会话跟踪技术&#x3D;&#x3D;，将数据保存在服务端。</p>
+<blockquote>
+<p>数据存在服务单比存在客户端要安全</p>
+</blockquote>
+<h3 id="2-session的原理"><a href="#2-session的原理" class="headerlink" title="2.session的原理"></a>2.session的原理</h3><p><code>cookie是存在浏览器上的，共享的数据可以直接在浏览器中获取；而session是存在服务器上的，共享的数据必须从服务器端获取，而不同的客户端应该只能获取自己的session（否则不就数据泄露了嘛），客户端是如何找到自己的session？</code></p>
+<p>当某个浏览器像服务器请求首次创建session，服务器会将这个session的sessionId存到cookie对象中响应给浏览器。（JSESSIONID就是sessionId，后面的HttpOnly表示临时）</p>
+<p><img src="D:\wps_file\note__picture\1652590924772.png" alt="1652590924772"></p>
+<p>如果这个浏览器想要获取它的session的数据时，就需要向服务器发送请求，请求都会携带cookie，服务器就可以通过cookie中的sessionId获取到这个浏览器的session，从而就能获取共享的数据了。</p>
+<blockquote>
+<p>注意：</p>
+<p>1.这两次请求得到的session是同一个对象。</p>
+<p>2.因为不同浏览器上cookie都是单独的，所以就算再一台电脑上，不同浏览器之间不能共享session的。</p>
+<p>3.如果浏览器彻底关闭，之前的session就找不到了，这是因为cookie被销毁了，cookie中的sessionId也就没了，而不是因为session被销毁了</p>
+</blockquote>
+<h3 id="3-session的使用"><a href="#3-session的使用" class="headerlink" title="3.session的使用"></a>3.session的使用</h3><p>获取session对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HttpSession</span> <span class="variable">session</span> <span class="operator">=</span> request.getSession();</span><br></pre></td></tr></table></figure>
+
+<p>存放数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session.setAttribute(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;wxl&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>获取数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> session.getAttribute(<span class="string">&quot;name&quot;</span>).toString();</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-session的销毁"><a href="#4-session的销毁" class="headerlink" title="4.session的销毁"></a>4.session的销毁</h3><h4 id="1）自动销毁"><a href="#1）自动销毁" class="headerlink" title="1）自动销毁"></a>1）自动销毁</h4><p>默认情况下，无操作30分钟，就销毁</p>
+<blockquote>
+<p>问题：<code>记时的起点是什么？这30分钟是如何计算的？</code></p>
+<p>从不操作服务器资源时开始计算，如果中途操作了服务器的资源则从头开始计算。</p>
+</blockquote>
+<p>在web.xml配置session的销毁时间</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">version</span>=<span class="string">&quot;3.1&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--配置session的销毁时间--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">session-config</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">session-timeout</span>&gt;</span>90<span class="tag">&lt;/<span class="name">session-timeout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">session-config</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2）手动销毁"><a href="#2）手动销毁" class="headerlink" title="2）手动销毁"></a>2）手动销毁</h4><p>调用Session对象的invalidate()进行销毁</p>
+<h3 id="5-session的钝化与活化（面试可能会问）"><a href="#5-session的钝化与活化（面试可能会问）" class="headerlink" title="5.session的钝化与活化（面试可能会问）"></a>5.session的钝化与活化（面试可能会问）</h3><h4 id="1）钝化"><a href="#1）钝化" class="headerlink" title="1）钝化"></a>1）钝化</h4><p>服务器&#x3D;&#x3D;正常关闭&#x3D;&#x3D;后，Tomcat会自动将session数据写入到硬盘文件中</p>
+<p><img src="D:\wps_file\note__picture\1652592912673.png" alt="1652592912673"></p>
+<h4 id="2）活化"><a href="#2）活化" class="headerlink" title="2）活化"></a>2）活化</h4><p>服务器再次启动后，会自动将这个文件中的数据加载到session，并删除这个文件</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://wxlong.com/2022/05/29/01-%E4%BC%9A%E8%AF%9D%E6%8A%80%E6%9C%AF/" data-id="cl3r07ddc0000hgjh3stggg67" data-title="01_会话技术" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-算法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/05/29/%E7%AE%97%E6%B3%95/" class="article-date">
@@ -225,6 +354,10 @@
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/05/29/01-%E4%BC%9A%E8%AF%9D%E6%8A%80%E6%9C%AF/">01_会话技术</a>
+          </li>
         
           <li>
             <a href="/2022/05/29/%E7%AE%97%E6%B3%95/">算法</a>
